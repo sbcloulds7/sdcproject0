@@ -1,0 +1,46 @@
+---
+title: "Title of project"
+author: "Your Name"
+date: "Put a date here"
+output: html_document
+#install rmarkdown package and check box
+#install ggplot2 package and check box
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(datasets)
+head(cars)
+hist(cars$dist,xlab="Stopping Distance (ft)",main="Speed and Stopping Distances of Cars")
+
+```
+
+```{r}
+library(datasets)
+plot(cars$speed,cars$dist,pch=16,xlab="Speed of Cars (mph)", ylab ="Stopping Distance (ft)", main="Speed and Stopping Distances of Car")
+
+```
+
+
+```{r}
+library(ggplot2)
+ggplot(cars, aes(x=dist))+
+  geom_histogram(binwidth=5,color="black",fill="greenyellow")+theme_bw()+
+  labs(x = "Stopping Distance (ft)",y="Frequency",
+       title="Stopping Distances and Speed of Cars")
+
+```
+
+```{r}
+
+library(ggplot2)
+ggplot(cars, aes(x=dist, y=speed))+
+  geom_point(size=3)+theme_bw()+
+  labs(x = "Speed of Cars (mph)",y = "Stopping Distance (ft)",
+       title="Stopping Distances and Speed of Cars")
+
+```
+

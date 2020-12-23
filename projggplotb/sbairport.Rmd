@@ -1,0 +1,55 @@
+---
+title: "Airport Mean Departure Delays"
+author: "SB (from R Projects for Dummies)"
+date: ""
+output: html_document
+---
+```{r}
+#library(ggplot2) #ggplot
+library(nycflights13) #flights
+library(knitr) #kable()
+library(tidyverse) #data manipulation
+library(lubridate) #wday
+library(plotrix) #standard error
+
+flites_dest_names <- flights %>%
+  inner_join(airports, by= c("dest" = "faa")) %>%
+  rename(dest_airport = name)
+
+#get flies_dest_names_again for weekday
+flites_dest_names_again <- flites_dest_names %>%
+  inner_join(airports, by= c("dest" = "faa")) %>%
+  rename(dest_airport_again = name)
+
+#Set up by days of the week
+flites_day <- flites_dest_names_again %>%
+  mutate(weekday = wday(time_hour))
+flites_day$weekday <- factor(flites_day$weekday,
+                             labels = c("Sunday", "Monday", "Tuesday", 
+                                        "Wednesday", "Thursday",
+                                        "Friday", "Saturday"))
+
+flites_per_weekday <- flites_day %>%
+  group_by(weekday) %>%
+  summarize(number_of_flights = n())
+
+#kable(flites_per_weekday)
+
+
+summary_dep_delay <- flites_day %>%
+  group_by(origin, weekday) %>%
+  summarize(mean = mean(dep_delay, na.rm = TRUE),
+            std_dev = sd(dep_delay, na.rm = TRUE),
+            std_err = std.error(dep_delay, na.rm = TRUE))
+#kable(summary_dep_delay)
+
+library(ggplot2) #facet plot
+ggplot(summary_dep_delay, aes(x=weekday, y=mean ))+
+  geom_bar(stat="identity", color="black", fill = "gray65", width = 0.3)+
+  geom_errorbar(aes(ymax=mean+std_err, ymin=mean-std_err), width= 0.05)+
+  facet_grid(origin ~ .)+
+  labs(y="Mean Departure Delay (min)")
+
+
+
+```
